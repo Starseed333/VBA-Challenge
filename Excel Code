@@ -1,0 +1,87 @@
+Sub StockData()
+
+Dim WS As Worksheet
+    For Each WS In Worksheets
+        WS.Activate
+        
+Dim LastRow As Long
+        LastRow = WS.Cells(Rows.Count, 1).End(xlUp).Row
+
+        Range("I1").Value = "Ticker"
+        Range("J1").Value = "Yearly Change"
+        Range("K1").Value = "Percent Change"
+        Range("L1").Value = "Total Stock Volume"
+
+        Dim Ticker As String
+        Dim TickerId As Integer
+        Dim OpenPrice As Double
+        Dim ClosePrice As Double
+        Dim YearlyChange As Double
+        Dim PercentChange As Double
+        Dim TotalStockVolume As Double
+    
+        
+        TickerId = 0
+        Ticker = ""
+        YearlyChange = 0
+        OpenPrice = 0
+        PercentChange = 0
+        TotalStockVolume = 0
+
+        For i = 2 To LastRow
+
+        Ticker = Cells(i, 1).Value
+
+        If OpenPrice = 0 Then
+            OpenPrice = Cells(i, 3).Value
+        End If
+
+        TotalStockVolume = TotalStockVolume + Cells(i, 7).Value
+
+        If Cells(i + 1, 1).Value <> Ticker Then
+            
+            TickerId = TickerId + 1
+            Cells(TickerId + 1, 9) = Ticker
+
+        ClosePrice = Cells(i, 6)
+
+        YearlyChange = ClosePrice - OpenPrice
+
+        Cells(TickerId + 1, 10).Value = YearlyChange
+
+         If OpenPrice <= 0 Then
+                PercentChange = 0
+            Else
+                PercentChange = (YearlyChange / OpenPrice)
+                Cells(TickerId + 1, 11).NumberFormat = "0.00%"
+            End If
+            
+            Cells(TickerId + 1, 11).Value = PercentChange
+            
+            OpenPrice = 0
+            
+            Cells(TickerId + 1, 12).Value = TotalStockVolume
+            
+            TotalStockVolume = 0
+            End If
+
+            If PercentChange > 0 Then
+                Cells(TickerId + 1, 11).Interior.ColorIndex = 4
+            End If
+            
+            If PercentChange < 0 Then
+                Cells(TickerId + 1, 11).Interior.ColorIndex = 3
+            End If
+        
+
+    Next i
+ 
+Next WS
+
+End Sub
+
+
+
+
+
+
